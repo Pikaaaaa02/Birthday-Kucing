@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Kucing 💙 (Happy Birthday Orang Tua)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .font-syne {
+            font-family: 'Syne', sans-serif;
+        }
+        .blue-gradient {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+        .glass-card {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+        }
+        .floating-star {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(8deg); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
+            70% { box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+
+        /* ===== NEW: ambient twinkling starfield (pure decoration, same blue palette) ===== */
+        #stars-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .twinkle-dot {
+            position: absolute;
+            border-radius: 9999px;
+            background: #60a5fa;
+            animation: twinkle ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.4); }
+        }
+
+        /* ===== NEW: shared styles for the added sections (reuses existing card language) ===== */
+        .timeline-dot {
+            box-shadow: 0 0 0 4px #030712, 0 0 12px 2px rgba(59,130,246,0.6);
+        }
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+        .wish-card {
+            animation: wishPop 0.4s ease-out;
+        }
+        @keyframes wishPop {
+            0% { opacity: 0; transform: translateY(8px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        #countdown-badge {
+            animation: fadeInBadge 0.8s ease-out 0.3s both;
+        }
+        @keyframes fadeInBadge {
+            0% { opacity: 0; transform: translateY(-6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white relative">
+
+    <!-- NEW: decorative twinkling starfield, populated by JS, sits behind everything -->
+    <div id="stars-container"></div>
+
+    <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <!-- ENTRANCE GATE SCREEN (untouched) -->
+    <div id="entrance-gate" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#030712]/95 backdrop-blur-xl transition-all duration-500">
+        <div class="glass-card max-w-md w-full p-8 rounded-3xl text-center border border-blue-500/40 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+
+            <span class="text-5xl mb-4 block floating-star">🎁</span>
+            <span class="text-blue-400 text-xs uppercase tracking-[0.3em] font-semibold bg-blue-950/80 border border-blue-500/30 px-4 py-1.5 rounded-full inline-block mb-3">
+                September 24th Gate
+            </span>
+
+            <h2 class="font-syne text-2xl sm:text-3xl font-extrabold mb-2 text-white">
+                Nak bukak tak hadiah? <span class="blue-gradient">Birthday Page</span>
+            </h2>
+
+            <p id="gate-message" class="text-slate-400 text-sm mb-8 min-h-[40px] flex items-center justify-center">
+                BUKAK AAAAAAAAA HALAMAAAK
+            </p>
+
+            <div class="flex items-center justify-center gap-4">
+                <button onclick="handleGateYes()" class="flex-1 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer text-sm">
+                    Yes! ✨
+                </button>
+                <button onclick="handleGateNo()" class="flex-1 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl border border-slate-700 transition transform hover:-translate-y-0.5 cursor-pointer text-sm">
+                    No 🙄
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app-container" class="flex flex-col justify-between min-h-screen hidden relative z-10">
+        <!-- Header Section (title/font untouched, subtitle + new countdown badge added) -->
+        <header class="text-center pt-10 pb-4 px-4 z-10">
+            <span class="text-blue-400 text-xs sm:text-sm uppercase tracking-[0.3em] font-semibold bg-blue-950/60 border border-blue-500/30 px-5 py-2 rounded-full inline-block mb-3 shadow-lg">
+                ✨ September 24th:Birthday Orang Tua ✨
+            </span>
+            <h1 class="font-syne text-4xl sm:text-7xl font-extrabold tracking-tight mb-3">
+                Happy Birthday, <span class="blue-gradient">Kucing!</span> 💙
+            </h1>
+            <p id="header-subtitle" class="text-slate-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed min-h-[3em]"></p>
+
+            <!-- NEW: live countdown badge to the next Sept 24 -->
+            <div id="countdown-badge" class="mt-4 inline-flex items-center gap-2 bg-blue-950/60 border border-blue-500/30 text-blue-300 text-xs sm:text-sm px-4 py-2 rounded-full">
+                <span>🎂</span>
+                <span id="countdown-text">Calculating the countdown...</span>
+            </div>
+        </header>
+
+        <!-- Main Content Hub -->
+        <main class="max-w-4xl w-full mx-auto px-4 py-2 z-10 flex-grow flex flex-col gap-6 items-center">
+
+            <!-- Interactive Tabs Navigation (3 new tabs added at the end) -->
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-3 bg-slate-900/90 p-2.5 rounded-2xl border border-blue-500/25 backdrop-blur-md shadow-xl">
+                <button onclick="switchTab('awards')" id="btn-awards" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer bg-blue-600 text-white shadow-lg">
+                    🏆 Bestie Awards
+                </button>
+                <button onclick="switchTab('appreciation')" id="btn-appreciation" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    🍜 Why You're Amazing
+                </button>
+                <button onclick="switchTab('memories')" id="btn-memories" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    🕰️ Memory Lane
+                </button>
+                <button onclick="switchTab('stats')" id="btn-stats" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    📊 Bestie Stats
+                </button>
+                <button onclick="switchTab('arcade')" id="btn-arcade" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    🕹️ Arcade Hub
+                </button>
+                <button onclick="switchTab('tam')" id="btn-tam" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    🐈 Tam's Corner
+                </button>
+                <button onclick="switchTab('wishes')" id="btn-wishes" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    ✨ Make A Wish
+                </button>
+                <button onclick="switchTab('letter')" id="btn-letter" class="px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800">
+                    💌 24/9 Letter
+                </button>
+            </div>
+
+            <div id="tab-awards" class="w-full max-w-2xl glass-card rounded-3xl p-6 sm:p-10 text-center relative transition-all duration-500">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs uppercase tracking-widest px-6 py-1.5 rounded-full shadow-lg">
+                    Official Recognition (24 Sept)
+                </div>
+
+                <!-- Video Player -->
+                <div class="mb-5 mt-2">
+                    <span class="text-xs font-semibold text-blue-400 uppercase tracking-widest block mb-2">🎵 Your Birthday Song, Made For You:</span>
+                    <div class="relative w-full aspect-video rounded-2xl overflow-hidden border border-blue-500/30 shadow-xl bg-slate-950">
+                        <div class="absolute top-3 left-3 z-10 bg-slate-950/80 border border-blue-500/30 text-blue-300 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-sm">
+                            ▶ Now Playing
+                        </div>
+                        <video id="birthday-video" class="w-full h-full object-cover" controls>
+                            <source src="kucing.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+
+                <div id="award-icon" class="text-5xl sm:text-6xl mb-3 floating-star">
+                    👑
+                </div>
+
+                <h2 id="award-title" class="font-syne text-xl sm:text-2xl font-bold mb-2 text-blue-200">
+                    My Kakak ❤️
+                </h2>
+
+                <p id="award-desc" class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed min-h-[60px]">
+                    For being the person who understands me completely without needing to say a word. You're my chosen family through everything.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="triggerMegaPartyAndVideo()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-500 via-indigo-600 to-blue-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold rounded-xl shadow-xl transition transform hover:-translate-y-0.5 cursor-pointer pulse-glow text-sm">
+                        🎉 Trigger Mega Birthday Fireworks! 🎆
+                    </button>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center justify-center gap-4 mt-6 pt-5 border-t border-slate-800">
+                    <button onclick="prevAward()" class="p-3 rounded-full bg-slate-800 hover:bg-slate-700 text-blue-400 border border-blue-500/20 transition cursor-pointer">
+                        ←
+                    </button>
+                    <div id="pagination-dots" class="flex gap-2"></div>
+                    <button onclick="nextAward()" class="p-3 rounded-full bg-slate-800 hover:bg-slate-700 text-blue-400 border border-blue-500/20 transition cursor-pointer">
+                        →
+                    </button>
+                </div>
+            </div>
+
+            <div id="tab-appreciation" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-10 hidden transition-all duration-500">
+                <h3 class="font-syne text-2xl font-bold text-blue-300 mb-6 text-center">🍜 The Generosity & Care Award</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20 hover:border-blue-500/50 transition">
+                        <span class="text-2xl mb-2 block">🍜</span>
+                        <h4 class="font-bold text-blue-200 mb-1">Selalu Belanja Me!</h4>
+                        <p class="text-slate-400 text-sm">Always treating me to food and making sure I'm well-fed and happy.</p>
+                    </div>
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20 hover:border-blue-500/50 transition">
+                        <span class="text-2xl mb-2 block">🎁</span>
+                        <h4 class="font-bold text-blue-200 mb-1">Thoughtful Gifts</h4>
+                        <p class="text-slate-400 text-sm">Always surprising me with little things just because. Your heart is genuinely too gold.</p>
+                    </div>
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20 hover:border-blue-500/50 transition">
+                        <span class="text-2xl mb-2 block">💙</span>
+                        <h4 class="font-bold text-blue-200 mb-1">Checking In Always</h4>
+                        <p class="text-slate-400 text-sm">Always making sure I'm okay and listening whenever life feels heavy. Best safe space ever.</p>
+                    </div>
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20 hover:border-blue-500/50 transition">
+                        <span class="text-2xl mb-2 block">🛡️</span>
+                        <h4 class="font-bold text-blue-200 mb-1">True Sister Energy</h4>
+                        <p class="text-slate-400 text-sm">Stuck with each other through thick and thin. You look out for me like a real sister.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ NEW TAB: MEMORY LANE ============ -->
+            <!-- EDIT ME: these are written for an online friendship. Swap in your real details (dates, specifics) whenever you want. -->
+            <div id="tab-memories" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-10 hidden transition-all duration-500">
+                <h3 class="font-syne text-2xl font-bold text-blue-300 mb-2 text-center">🕰️ Memory Lane</h3>
+                <p class="text-slate-400 text-sm text-center mb-8">Proof that distance never made this friendship any less real.</p>
+
+                <div class="relative pl-7 border-l-2 border-blue-500/25 space-y-8">
+                    <div class="relative">
+                        <div class="timeline-dot absolute -left-[33px] top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <span class="text-blue-400 text-xs font-semibold uppercase tracking-wide">The Beginning</span>
+                        <h4 class="font-bold text-blue-200 mt-1 mb-1">Brought Together By Mayu</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            <!-- EDIT: replace with your real story -->
+                            It started because of Mayu, of all things. Saje masuk Fisch tiba tiba ter rapat pulaaak
+                        </p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot absolute -left-[33px] top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <span class="text-blue-400 text-xs font-semibold uppercase tracking-wide">A Classic</span>
+                        <h4 class="font-bold text-blue-200 mt-1 mb-1">The 1AM Voice Call That Wouldn't End</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            <!-- EDIT: replace with your real story -->
+                            "Segame lagi segame lagi" Tau tau tido lambat
+                        </p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot absolute -left-[33px] top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <span class="text-blue-400 text-xs font-semibold uppercase tracking-wide">Inside Jokes</span>
+                        <h4 class="font-bold text-blue-200 mt-1 mb-1">The Meme Spam Hall of Fame</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            <!-- EDIT: replace with your real story -->
+                            Somewhere in our chat history is a meme so unhinged only the two of us will ever understand why it's funny.
+                        </p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot absolute -left-[33px] top-1 w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <span class="text-blue-400 text-xs font-semibold uppercase tracking-wide">In Person, Finally</span>
+                        <h4 class="font-bold text-blue-200 mt-1 mb-1">The 3 Times We Actually Met</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            <!-- EDIT: replace with your real story -->
+                            Every single time felt like picking up a conversation we never really paused. Online bestie, real-life bestie, no difference.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ NEW TAB: BESTIE STATS ============ -->
+            <div id="tab-stats" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-10 hidden transition-all duration-500 text-center">
+                <span class="text-6xl mb-4 block floating-star">📊</span>
+                <h3 class="font-syne text-2xl font-bold text-blue-300 mb-2">The Official Bestie Stats</h3>
+                <p class="text-slate-400 text-sm mb-8 max-w-md mx-auto">Tak berapa nk accurate sebab aku ingt tk ingt.</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20">
+                        <span class="stat-number block text-3xl sm:text-4xl font-extrabold text-blue-400 font-syne" data-target="9999" id="stat-messages">0</span>
+                        <span class="text-slate-400 text-xs uppercase tracking-wide">Messages Sent</span>
+                    </div>
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20">
+                        <span class="stat-number block text-3xl sm:text-4xl font-extrabold text-blue-400 font-syne" data-target="200" id="stat-calls">0</span>
+                        <span class="text-slate-400 text-xs uppercase tracking-wide">Berapa kali kena emote</span>
+                    </div>
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20">
+                        <span class="stat-number block text-3xl sm:text-4xl font-extrabold text-blue-400 font-syne" data-target="3" id="stat-meetups">0</span>
+                        <span class="text-slate-400 text-xs uppercase tracking-wide">Times We Met In Person</span>
+                    </div>
+                    <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20">
+                        <span class="stat-number block text-3xl sm:text-4xl font-extrabold text-blue-400 font-syne" id="stat-infinity">∞</span>
+                        <span class="text-slate-400 text-xs uppercase tracking-wide">Times You've Had My Back</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-arcade" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-10 hidden transition-all duration-500 text-center">
+                <span class="text-6xl mb-4 block floating-star">🕹️</span>
+                <h3 class="font-syne text-2xl font-bold text-blue-300 mb-3">Tam's Neon Treat Catcher Arcade</h3>
+                <p class="text-slate-300 text-base leading-relaxed max-w-lg mx-auto mb-6">
+                    Main do arcade aku buat ni, sakit pale buat <strong>Tam's Neon Treat Catcher</strong> tk seberapa tapi bolela we
+                </p>
+                <button onclick="openArcadePage()" class="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-xl transition transform hover:-translate-y-0.5 cursor-pointer text-sm">
+                    🎮 Enter the Neon Arcade Arena! 🚀
+                </button>
+            </div>
+
+            <div id="tab-tam" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-10 hidden transition-all duration-500 text-center">
+                <span class="text-6xl mb-4 block floating-star">🐈</span>
+                <h3 class="font-syne text-2xl font-bold text-blue-300 mb-3">Tam Approves This Message!</h3>
+                <p class="text-slate-300 text-base leading-relaxed max-w-lg mx-auto mb-6">
+                    Haa kau suka sangat tam kan <strong>Tam</strong> Tam cakap Happy Birthday dekat orang tua niii
+                </p>
+                <div class="bg-slate-900/90 p-5 rounded-2xl border border-blue-500/20 max-w-md mx-auto mb-6">
+                    <p class="text-blue-400 italic text-sm">"Tam says thanks for always being such an awesome, caring bestie. You deserve all the treats in the world today!"</p>
+                </div>
+                <button onclick="openCatGallery()" class="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-xl transition transform hover:-translate-y-0.5 cursor-pointer text-sm">
+                    📸 Click Me For Tam's Photo Gallery! 🐾
+                </button>
+            </div>
+
+            <!-- ============ NEW TAB: MAKE A WISH ============ -->
+            <div id="tab-wishes" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-10 hidden transition-all duration-500">
+                <div class="text-center mb-6">
+                    <span class="text-6xl mb-4 block floating-star">✨</span>
+                    <h3 class="font-syne text-2xl font-bold text-blue-300 mb-2">Make A Wish, Kucing</h3>
+                    <p class="text-slate-400 text-sm max-w-md mx-auto">Type a birthday wish below and blow out the candle. Wish jela jangan banyak bunyi.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 mb-6 max-w-lg mx-auto">
+                    <input
+                        id="wish-input"
+                        type="text"
+                        maxlength="120"
+                        placeholder="I wish for..."
+                        class="flex-1 bg-slate-900 border border-blue-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-400 transition"
+                        onkeydown="if(event.key === 'Enter'){ addWish(); }"
+                    />
+                    <button onclick="addWish()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer text-sm whitespace-nowrap">
+                        Blow Out 🕯️
+                    </button>
+                </div>
+
+                <div id="wishes-list" class="space-y-3 max-w-lg mx-auto text-left"></div>
+                <p id="wishes-empty" class="text-slate-500 text-xs text-center italic">No wishes yet — go ahead, make one!</p>
+            </div>
+
+            <div id="tab-letter" class="w-full max-w-2xl glass-card rounded-3xl p-8 sm:p-12 hidden transition-all duration-500 relative">
+                <div class="absolute -top-3 right-8 bg-blue-500 text-slate-950 font-bold text-xs uppercase px-4 py-1 rounded-full">
+                    September 24
+                </div>
+                <h3 class="font-syne text-2xl font-bold text-blue-200 mb-4">Dear Kucing, 💙</h3>
+                <div class="text-slate-300 space-y-4 text-sm sm:text-base leading-relaxed">
+                    <p>Happy Birthday on the 24th of September! Aku nak beli hadiah dekat kau tapi tengah pokai, so aku buat hadiah ni dulu lah ek💀 nanti time aku intern aku belikan hadiah aku tk kira.</p>
+                    <p>Thank you sebab selalu belanja aku makan, beli aku itu ini. Thank you selalu layan adik kau yang bongok ni. Selalu dengar cerita cerita aku semua. Semoga kau selalu dimurahkan rezeki, dipanjangkan umur dan sentiasa jadi anak solehah...semoga happy happy selalu
+                        sebab kalau emo tak boleh jdi serial killer. Nanti kita jumpa lagi taau sayang kau banyak banyaaaak 🩷❤️
+                    </p>
+                    <p class="text-blue-400 font-semibold pt-2">Wishing you the absolute happiest birthday ever. ✨</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-5 text-xs text-slate-500 z-10">
+            Coded with endless love for Kucing 💙 (Sept 24)
+        </footer>
+    </div>
+
+    <div id="arcade-page" class="hidden min-h-screen flex flex-col justify-between p-4 sm:p-8 max-w-4xl mx-auto w-full z-20 relative">
+        <div>
+            <!-- Back Button -->
+            <button onclick="closeArcadePage()" class="mb-6 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-blue-400 border border-blue-500/30 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-md">
+                ← Back to Birthday Hub
+            </button>
+
+            <!-- Arcade Header -->
+            <div class="text-center mb-6">
+                <span class="text-blue-400 text-xs uppercase tracking-[0.2em] font-semibold bg-blue-950/60 border border-blue-500/30 px-4 py-1.5 rounded-full inline-block mb-2">
+                    🕹️ Tam's Neon Treat Catcher Arcade 🕹️
+                </span>
+                <h2 class="font-syne text-3xl sm:text-5xl font-extrabold tracking-tight mb-2">
+                    Catch Treats for <span class="blue-gradient">Tam!</span>
+                </h2>
+                <p class="text-slate-400 text-sm max-w-lg mx-auto">
+                    Use mouse, touch, or left/right arrow keys to guide Tam's glowing blue basket. Catch fish (1x), golden stars (3x), and sushi power-ups while avoiding sour lemons!
+                </p>
+            </div>
+
+            <!-- Arcade HUD Dashboard -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 max-w-2xl mx-auto">
+                <div class="bg-slate-900/90 border border-blue-500/30 p-3 rounded-2xl text-center">
+                    <span class="text-slate-400 text-[10px] uppercase tracking-wider block">Score</span>
+                    <span id="neon-score" class="text-xl sm:text-2xl font-extrabold text-blue-400">0</span>
+                </div>
+                <div class="bg-slate-900/90 border border-blue-500/30 p-3 rounded-2xl text-center">
+                    <span class="text-slate-400 text-[10px] uppercase tracking-wider block">Combo</span>
+                    <span id="neon-combo" class="text-xl sm:text-2xl font-extrabold text-indigo-400">1x</span>
+                </div>
+                <div class="bg-slate-900/90 border border-blue-500/30 p-3 rounded-2xl text-center">
+                    <span class="text-slate-400 text-[10px] uppercase tracking-wider block">Lives</span>
+                    <span id="neon-lives" class="text-xl sm:text-2xl font-extrabold text-rose-400">❤️❤️❤️</span>
+                </div>
+                <div class="bg-slate-900/90 border border-blue-500/30 p-3 rounded-2xl text-center">
+                    <span class="text-slate-400 text-[10px] uppercase tracking-wider block">Time Left</span>
+                    <span id="neon-timer" class="text-xl sm:text-2xl font-extrabold text-emerald-400">45s</span>
+                </div>
+            </div>
+
+            <!-- Canvas Arena -->
+            <div id="neon-arena-container" class="relative w-full max-w-2xl mx-auto h-[380px] sm:h-[420px] bg-slate-950/95 rounded-3xl overflow-hidden border border-blue-500/40 shadow-2xl mb-6 cursor-crosshair">
+                <canvas id="neonCanvas" class="w-full h-full block"></canvas>
+
+                <!-- Overlay Start / GameOver Screen -->
+                <div id="neon-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-sm text-center p-6 z-10">
+                    <span class="text-5xl mb-3 floating-star">🐟✨</span>
+                    <h3 id="neon-overlay-title" class="font-syne text-2xl sm:text-3xl font-extrabold text-white mb-2">Tam's Neon Arcade</h3>
+                    <p id="neon-overlay-desc" class="text-slate-300 text-xs sm:text-sm max-w-md mb-6">
+                        Ready to prove your catching skills? Collect fish & sushi, avoid sour lemons!
+                    </p>
+                    <button onclick="startNeonGame()" class="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-xl transition transform hover:-translate-y-0.5 cursor-pointer text-sm">
+                        Start Arcade Game 🚀
+                    </button>
+                </div>
+            </div>
+
+            <!-- Achievement Reward Banner -->
+            <div id="neon-reward-banner" class="hidden max-w-2xl mx-auto bg-blue-950/90 border border-blue-400/40 p-4 rounded-2xl text-blue-200 text-sm text-center animate-pulse mb-8 shadow-xl">
+                🏆 ARCADE HIGH SCORE UNLOCKED! Tam are awarding you the Ultimate Gamer Trophy! 💙✨
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center py-4 text-xs text-slate-500">
+            Neon Arcade Edition 💙 (Sept 24)
+        </footer>
+    </div>
+
+    <!-- Cat Gallery Page (untouched) -->
+    <div id="cat-gallery-page" class="hidden min-h-screen flex flex-col justify-between p-4 sm:p-8 max-w-4xl mx-auto w-full z-20 relative">
+        <div>
+            <!-- Back Button -->
+            <button onclick="closeCatGallery()" class="mb-6 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-blue-400 border border-blue-500/30 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-md">
+                ← Back to Birthday Hub
+            </button>
+
+            <!-- Gallery Header -->
+            <div class="text-center mb-8">
+                <span class="text-blue-400 text-xs uppercase tracking-[0.2em] font-semibold bg-blue-950/60 border border-blue-500/30 px-4 py-1.5 rounded-full inline-block mb-2">
+                    🐾 Exclusive Cat Photo Album 🐾
+                </span>
+                <h2 class="font-syne text-3xl sm:text-5xl font-extrabold tracking-tight mb-2">
+                    Tam's <span class="blue-gradient">Photo Gallery</span>
+                </h2>
+                <p class="text-slate-400 text-sm max-w-md mx-auto">
+                    A special collection of pictures dedicated to Kucing's favorite feline companion!
+                </p>
+            </div>
+
+            <!-- Image Grid Layout -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+                <!-- Photo Card 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden p-3 border border-blue-500/20 hover:border-blue-500/50 transition">
+                    <div class="w-full aspect-square bg-slate-900 rounded-xl overflow-hidden relative mb-3 flex items-center justify-center">
+                        <img src="tam1.jpeg" alt="Tam Photo 1" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%233b82f6\' stroke-width=\'1\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><path d=\'21 15l-5-5L5 21\'/></svg>';">
+                    </div>
+                    <h3 class="font-bold text-blue-200 text-sm text-center">Tam's Cute Pose 🐾</h3>
+                    <p class="text-slate-400 text-xs text-center mt-1">Gedik gedikkk jeee!</p>
+                </div>
+
+                <!-- Photo Card 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden p-3 border border-blue-500/20 hover:border-blue-500/50 transition">
+                    <div class="w-full aspect-square bg-slate-900 rounded-xl overflow-hidden relative mb-3 flex items-center justify-center">
+                        <img src="tam2.jpeg" alt="Tam Photo 2" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%233b82f6\' stroke-width=\'1\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><path d=\'21 15l-5-5L5 21\'/></svg>';">
+                    </div>
+                    <h3 class="font-bold text-blue-200 text-sm text-center">Naptime Champion 💤</h3>
+                    <p class="text-slate-400 text-xs text-center mt-1">Terbongkang la ek.</p>
+                </div>
+
+                <!-- Photo Card 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden p-3 border border-blue-500/20 hover:border-blue-500/50 transition">
+                    <div class="w-full aspect-square bg-slate-900 rounded-xl overflow-hidden relative mb-3 flex items-center justify-center">
+                        <img src="tam3.jpeg" alt="Tam Photo 3" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%233b82f6\' stroke-width=\'1\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><path d=\'21 15l-5-5L5 21\'/></svg>';">
+                    </div>
+                    <h3 class="font-bold text-blue-200 text-sm text-center">Ready for Treats 🐟</h3>
+                    <p class="text-slate-400 text-xs text-center mt-1">Bila kau nk bagi dia makan cinggg</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center py-5 text-xs text-slate-500">
+            Tam's Official Photo Collection 💙
+        </footer>
+    </div>
+
+    <script>
+        // Entrance Gate Logic (untouched)
+        const noMessages = [
+            "Pahal lak taknak bukak adumak",
+            "Nice try! kau tekan jela yes setan",
+            "Nope, wrong button! jangan tekan no la",
+            "Tam cakap jangan nak tekan tekan no lah"
+        ];
+        let noClickCount = 0;
+
+        function handleGateNo() {
+            const msgEl = document.getElementById('gate-message');
+            msgEl.textContent = noMessages[noClickCount % noMessages.length];
+            noClickCount++;
+        }
+
+        function handleGateYes() {
+            const gate = document.getElementById('entrance-gate');
+            gate.style.opacity = '0';
+            gate.style.pointerEvents = 'none';
+            setTimeout(() => {
+                gate.classList.add('hidden');
+                document.getElementById('main-app-container').classList.remove('hidden');
+                triggerMegaPartyAndVideo();
+            }, 500);
+        }
+
+        // Tab Navigation (extended with the 3 new tabs: memories, stats, wishes)
+        function switchTab(tabId) {
+            const tabs = ['awards', 'appreciation', 'memories', 'stats', 'arcade', 'tam', 'wishes', 'letter'];
+            tabs.forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                const btn = document.getElementById('btn-' + t);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    btn.className = "px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer bg-blue-600 text-white shadow-lg";
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = "px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-slate-400 hover:text-white hover:bg-slate-800";
+                }
+            });
+
+            // Trigger the count-up animation the first time the Stats tab is opened
+            if (tabId === 'stats' && !statsAnimated) {
+                animateStats();
+                statsAnimated = true;
+            }
+        }
+
+        // Awards Carousel Data (untouched)
+        const awards = [
+            {
+                icon: "👑",
+                title: "My Best Sister",
+                desc: "For being the person who understands me completely and treats me like family every single day."
+            },
+            {
+                icon: "🍜",
+                title: "The Ultimate 'Belanja & Feed Me' Champion",
+                desc: "Because you always make sure I'm well-fed, spoiled with food and happy!"
+            },
+            {
+                icon: "💙",
+                title: "The 'Are You Okay?' Guardian",
+                desc: "For constantly checking in on me and being the safest, most comforting presence in my life."
+            },
+            {
+                icon: "🐈",
+                title: "Tam's Favorite Human Award (24/9)",
+                desc: "For loving my cat Tam just as much as I do. Happy Birthday on September 24th cingggg"
+            }
+        ];
+
+        let currentIndex = 0;
+        const titleEl = document.getElementById('award-title');
+        const descEl = document.getElementById('award-desc');
+        const iconEl = document.getElementById('award-icon');
+        const dotsContainer = document.getElementById('pagination-dots');
+
+        function renderDots() {
+            dotsContainer.innerHTML = '';
+            awards.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = `w-3 h-3 rounded-full transition-all cursor-pointer ${i === currentIndex ? 'bg-blue-500 w-6' : 'bg-slate-700 hover:bg-slate-600'}`;
+                dot.onclick = () => {
+                    currentIndex = i;
+                    updateCard();
+                };
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function updateCard() {
+            const card = document.getElementById('tab-awards');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                const award = awards[currentIndex];
+                iconEl.textContent = award.icon;
+                titleEl.textContent = award.title;
+                descEl.textContent = award.desc;
+                renderDots();
+
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200);
+        }
+
+        function nextAward() {
+            currentIndex = (currentIndex + 1) % awards.length;
+            updateCard();
+        }
+
+        function prevAward() {
+            currentIndex = (currentIndex - 1 + awards.length) % awards.length;
+            updateCard();
+        }
+
+        renderDots();
+
+        // Mega Party Confetti & Video Trigger (untouched)
+        function triggerMegaPartyAndVideo() {
+            const video = document.getElementById('birthday-video');
+            if(video) video.play().catch(e => console.log("Video autoplay handled"));
+
+            if(typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#3b82f6', '#60a5fa', '#1d4ed8', '#93c5fd', '#ffffff']
+                });
+            }
+        }
+
+        // Navigation between Hub and Arcade/Gallery Views (untouched)
+        function openArcadePage() {
+            document.getElementById('main-app-container').classList.add('hidden');
+            document.getElementById('arcade-page').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            initNeonCanvas();
+        }
+
+        function closeArcadePage() {
+            document.getElementById('arcade-page').classList.add('hidden');
+            document.getElementById('main-app-container').classList.remove('hidden');
+            stopNeonGame();
+        }
+
+        function openCatGallery() {
+            document.getElementById('main-app-container').classList.add('hidden');
+            document.getElementById('cat-gallery-page').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function closeCatGallery() {
+            document.getElementById('cat-gallery-page').classList.add('hidden');
+            document.getElementById('main-app-container').classList.remove('hidden');
+        }
+
+        // ==========================================
+        // NEON ARCADE GAME ENGINE (TAM'S TREAT CATCHER) — fully untouched
+        // ==========================================
+        let neonCanvas, neonCtx;
+        let neonRunning = false;
+        let neonScore = 0;
+        let neonCombo = 1;
+        let neonLives = 3;
+        let neonTimer = 45;
+        let neonTimerInterval = null;
+        let neonAnimFrame = null;
+        let neonItems = [];
+        let neonParticles = [];
+        let neonBasket = { x: 200, y: 340, width: 80, height: 28, speed: 10 };
+        let neonKeys = { left: false, right: false };
+
+        function initNeonCanvas() {
+            neonCanvas = document.getElementById('neonCanvas');
+            if(!neonCanvas) return;
+            neonCtx = neonCanvas.getContext('2d');
+
+            const container = document.getElementById('neon-arena-container');
+            neonCanvas.width = container.clientWidth;
+            neonCanvas.height = container.clientHeight;
+            neonBasket.y = neonCanvas.height - 40;
+            neonBasket.x = neonCanvas.width / 2 - neonBasket.width / 2;
+
+            drawNeonIdle();
+
+            window.addEventListener('keydown', handleNeonKeyDown);
+            window.addEventListener('keyup', handleNeonKeyUp);
+
+            container.onmousemove = (e) => {
+                if(!neonRunning) return;
+                const rect = neonCanvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                neonBasket.x = mouseX - neonBasket.width / 2;
+                clampBasket();
+            };
+
+            container.ontouchmove = (e) => {
+                if(!neonRunning) return;
+                const rect = neonCanvas.getBoundingClientRect();
+                const touchX = e.touches[0].clientX - rect.left;
+                neonBasket.x = touchX - neonBasket.width / 2;
+                clampBasket();
+                e.preventDefault();
+            };
+        }
+
+        function clampBasket() {
+            if(neonBasket.x < 0) neonBasket.x = 0;
+            if(neonBasket.x > neonCanvas.width - neonBasket.width) neonBasket.x = neonCanvas.width - neonBasket.width;
+        }
+
+        function handleNeonKeyDown(e) {
+            if(!neonRunning) return;
+            if(e.key === 'ArrowLeft' || e.key === 'a') neonKeys.left = true;
+            if(e.key === 'ArrowRight' || e.key === 'd') neonKeys.right = true;
+        }
+
+        function handleNeonKeyUp(e) {
+            if(e.key === 'ArrowLeft' || e.key === 'a') neonKeys.left = false;
+            if(e.key === 'ArrowRight' || e.key === 'd') neonKeys.right = false;
+        }
+
+        function drawNeonIdle() {
+            if(!neonCtx) return;
+            neonCtx.fillStyle = '#030712';
+            neonCtx.fillRect(0, 0, neonCanvas.width, neonCanvas.height);
+
+            neonCtx.fillStyle = '#60a5fa';
+            neonCtx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
+            neonCtx.textAlign = 'center';
+            neonCtx.fillText("Ready to Play Tam's Neon Arcade?", neonCanvas.width / 2, neonCanvas.height / 2 - 10);
+        }
+
+        function startNeonGame() {
+            neonRunning = true;
+            neonScore = 0;
+            neonCombo = 1;
+            neonLives = 3;
+            neonTimer = 45;
+            neonItems = [];
+            neonParticles = [];
+
+            updateNeonHUD();
+            document.getElementById('neon-overlay').classList.add('hidden');
+            document.getElementById('neon-reward-banner').classList.add('hidden');
+
+            if(neonTimerInterval) clearInterval(neonTimerInterval);
+            neonTimerInterval = setInterval(() => {
+                neonTimer--;
+                updateNeonHUD();
+                if(neonTimer <= 0) {
+                    endNeonGame(true);
+                }
+            }, 1000);
+
+            if(neonAnimFrame) cancelAnimationFrame(neonAnimFrame);
+            neonAnimFrame = requestAnimationFrame(updateNeonLoop);
+        }
+
+        function updateNeonHUD() {
+            document.getElementById('neon-score').textContent = neonScore;
+            document.getElementById('neon-combo').textContent = neonCombo + 'x';
+            document.getElementById('neon-lives').textContent = '❤️'.repeat(Math.max(0, neonLives));
+            document.getElementById('neon-timer').textContent = neonTimer + 's';
+        }
+
+        function endNeonGame(isWin) {
+            neonRunning = false;
+            clearInterval(neonTimerInterval);
+            cancelAnimationFrame(neonAnimFrame);
+
+            const overlay = document.getElementById('neon-overlay');
+            const title = document.getElementById('neon-overlay-title');
+            const desc = document.getElementById('neon-overlay-desc');
+
+            overlay.classList.remove('hidden');
+
+            if(isWin && neonScore >= 50) {
+                title.textContent = "🎉 Arcade Champion! Amazing!";
+                desc.textContent = `You scored ${neonScore} points! Kucing & Tam are so proud of your gamer skills! 💙`;
+                document.getElementById('neon-reward-banner').classList.remove('hidden');
+                if(typeof confetti === 'function') confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            } else {
+                title.textContent = isWin ? "Game Over - Time's Up!" : "Oh no! Out of lives!";
+                desc.textContent = `You final score was ${neonScore} points. Click below to try again! 🐾`;
+            }
+        }
+
+        function spawnNeonItem() {
+            const rand = Math.random();
+            let type = 'fish';
+            let points = 10;
+            let icon = '🐟';
+            let speed = 2.5 + Math.random() * 2.5;
+
+            if(rand < 0.20) {
+                type = 'star';
+                points = 30;
+                icon = '⭐';
+                speed = 3.5;
+            } else if(rand < 0.35) {
+                type = 'sushi';
+                points = 50;
+                icon = '🍣';
+                speed = 4;
+            } else if(rand < 0.55) {
+                type = 'hazard';
+                points = -20;
+                icon = '🍋';
+                speed = 3;
+            }
+
+            neonItems.push({
+                x: Math.random() * (neonCanvas.width - 30),
+                y: -30,
+                size: 28,
+                speed: speed,
+                type: type,
+                points: points,
+                icon: icon
+            });
+        }
+
+        function addNeonParticles(x, y, color) {
+            for(let i = 0; i < 8; i++) {
+                neonParticles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: 3 + Math.random() * 3,
+                    color: color,
+                    alpha: 1
+                });
+            }
+        }
+
+        function updateNeonLoop() {
+            if(!neonRunning) return;
+
+            // Keyboard movement
+            if(neonKeys.left) neonBasket.x -= neonBasket.speed;
+            if(neonKeys.right) neonBasket.x += neonBasket.speed;
+            clampBasket();
+
+            // Spawn rate
+            if(Math.random() < 0.045) {
+                spawnNeonItem();
+            }
+
+            // Clear Canvas with glowing trail effect
+            neonCtx.fillStyle = 'rgba(3, 7, 18, 0.35)';
+            neonCtx.fillRect(0, 0, neonCanvas.width, neonCanvas.height);
+
+            // Update & Draw Particles
+            for(let i = neonParticles.length - 1; i >= 0; i--) {
+                let p = neonParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.03;
+                if(p.alpha <= 0) {
+                    neonParticles.splice(i, 1);
+                    continue;
+                }
+                neonCtx.save();
+                neonCtx.globalAlpha = p.alpha;
+                neonCtx.fillStyle = p.color;
+                neonCtx.beginPath();
+                neonCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                neonCtx.fill();
+                neonCtx.restore();
+            }
+
+            // Update & Draw Items
+            for(let i = neonItems.length - 1; i >= 0; i--) {
+                let item = neonItems[i];
+                item.y += item.speed;
+
+                // Draw item icon
+                neonCtx.font = `${item.size}px sans-serif`;
+                neonCtx.textAlign = 'center';
+                neonCtx.fillText(item.icon, item.x, item.y);
+
+                // Collision with basket
+                if(
+                    item.y + 15 >= neonBasket.y &&
+                    item.x >= neonBasket.x - 10 &&
+                    item.x <= neonBasket.x + neonBasket.width + 10
+                ) {
+                    if(item.type === 'hazard') {
+                        neonLives--;
+                        neonCombo = 1;
+                        addNeonParticles(item.x, item.y, '#f43f5e');
+                    } else {
+                        neonScore += item.points * neonCombo;
+                        neonCombo = Math.min(5, neonCombo + 1);
+                        addNeonParticles(item.x, item.y, '#3b82f6');
+                    }
+                    updateNeonHUD();
+                    neonItems.splice(i, 1);
+
+                    if(neonLives <= 0) {
+                        endNeonGame(false);
+                        return;
+                    }
+                    continue;
+                }
+
+                // Remove if off screen
+                if(item.y > neonCanvas.height + 30) {
+                    neonItems.splice(i, 1);
+                }
+            }
+
+            // Draw Tam's Neon Glow Basket
+            neonCtx.shadowColor = '#3b82f6';
+            neonCtx.shadowBlur = 15;
+            neonCtx.fillStyle = '#2563eb';
+            neonCtx.beginPath();
+            neonCtx.roundRect(neonBasket.x, neonBasket.y, neonBasket.width, neonBasket.height, [10, 10, 14, 14]);
+            neonCtx.fill();
+            neonCtx.shadowBlur = 0; // reset
+
+            // Basket rim & label
+            neonCtx.fillStyle = '#93c5fd';
+            neonCtx.fillRect(neonBasket.x - 4, neonBasket.y, neonBasket.width + 8, 6);
+            neonCtx.fillStyle = '#ffffff';
+            neonCtx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
+            neonCtx.textAlign = 'center';
+            neonCtx.fillText("🐾 Tam Bowl", neonBasket.x + neonBasket.width / 2, neonBasket.y + 18);
+
+            neonAnimFrame = requestAnimationFrame(updateNeonLoop);
+        }
+
+        function stopNeonGame() {
+            neonRunning = false;
+            if(neonTimerInterval) clearInterval(neonTimerInterval);
+            if(neonAnimFrame) cancelAnimationFrame(neonAnimFrame);
+        }
+
+        // ==========================================
+        // NEW: Ambient twinkling starfield background
+        // ==========================================
+        (function createStarfield() {
+            const container = document.getElementById('stars-container');
+            const STAR_COUNT = 40;
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'twinkle-dot';
+                const size = Math.random() * 2.5 + 1;
+                dot.style.width = size + 'px';
+                dot.style.height = size + 'px';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.animationDuration = (3 + Math.random() * 4) + 's';
+                dot.style.animationDelay = (Math.random() * 4) + 's';
+                container.appendChild(dot);
+            }
+        })();
+
+        // ==========================================
+        // NEW: Header subtitle typewriter (single on-load moment)
+        // ==========================================
+        (function typewriterSubtitle() {
+            const el = document.getElementById('header-subtitle');
+            const fullText = "EHEHEHEHEHE KUCING DAH TUAAAA PADAN MUKA";
+            let i = 0;
+            function type() {
+                if (i <= fullText.length) {
+                    el.textContent = fullText.slice(0, i);
+                    i++;
+                    setTimeout(type, 14);
+                }
+            }
+            type();
+        })();
+
+        // ==========================================
+        // NEW: Live countdown to the next September 24th
+        // ==========================================
+        function updateBirthdayCountdown() {
+            const now = new Date();
+            const year = now.getFullYear();
+            let target = new Date(year, 8, 24, 0, 0, 0); // September is month index 8
+
+            const isSameDay = now.getFullYear() === target.getFullYear() &&
+                               now.getMonth() === target.getMonth() &&
+                               now.getDate() === target.getDate();
+
+            if (isSameDay) {
+                document.getElementById('countdown-text').textContent = "It's the day! Happy Birthday, Kucing! 🎉";
+                return;
+            }
+
+            if (now > target) {
+                target = new Date(year + 1, 8, 24, 0, 0, 0);
+            }
+
+            const diffMs = target - now;
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+            const seconds = Math.floor((diffMs / 1000) % 60);
+
+            document.getElementById('countdown-text').textContent =
+                `${days}d ${hours}h ${minutes}m ${seconds}s until the next celebration`;
+        }
+        updateBirthdayCountdown();
+        setInterval(updateBirthdayCountdown, 1000);
+
+        // ==========================================
+        // NEW: Bestie Stats count-up animation
+        // ==========================================
+        let statsAnimated = false;
+        function animateStats() {
+            document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+                const target = parseInt(el.getAttribute('data-target'), 10);
+                const duration = 1400;
+                const startTime = performance.now();
+
+                function step(now) {
+                    const progress = Math.min((now - startTime) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                    el.textContent = Math.floor(eased * target).toLocaleString();
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        el.textContent = target.toLocaleString();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+        }
+
+        // ==========================================
+        // NEW: Make A Wish interactive jar
+        // ==========================================
+        const wishEmojis = ['🎈', '🌟', '🕯️', '💫', '🎀', '🍰', '🩵'];
+        function addWish() {
+            const input = document.getElementById('wish-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const list = document.getElementById('wishes-list');
+            const emptyMsg = document.getElementById('wishes-empty');
+            emptyMsg.classList.add('hidden');
+
+            const emoji = wishEmojis[Math.floor(Math.random() * wishEmojis.length)];
+            const card = document.createElement('div');
+            card.className = 'wish-card bg-slate-900/90 border border-blue-500/20 rounded-2xl px-4 py-3 flex items-start gap-3';
+            card.innerHTML = `
+                <span class="text-xl">${emoji}</span>
+                <p class="text-slate-300 text-sm leading-relaxed">${text.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+            `;
+            list.prepend(card);
+            input.value = '';
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 40,
+                    spread: 60,
+                    origin: { y: 0.7 },
+                    colors: ['#3b82f6', '#60a5fa', '#93c5fd', '#ffffff']
+                });
+            }
+        }
+    </script>
+</body>
+</html>
